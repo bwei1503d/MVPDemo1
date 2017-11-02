@@ -28,6 +28,7 @@ public class MainActivity extends Activity implements LoginView{
         ButterKnife.bind(this);
 
 
+//        this  代表 LoginView
         presenter = new LoginPresenter(this);
 
 
@@ -38,6 +39,7 @@ public class MainActivity extends Activity implements LoginView{
 
     }
 
+    // 登陆按钮的点击事件
     @OnClick(R.id.login)
     public void onClick() {
         presenter.login(phone.getText().toString(),password.getText().toString());
@@ -58,7 +60,13 @@ public class MainActivity extends Activity implements LoginView{
 
     @Override
     public void loginSuccess(Object object) {
-        Toast.makeText(this, "loginSuccess", Toast.LENGTH_SHORT).show();
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MainActivity.this, "loginSuccess", Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
@@ -66,5 +74,12 @@ public class MainActivity extends Activity implements LoginView{
     public void loginFailed(int code) {
         Toast.makeText(this, "loginFailed", Toast.LENGTH_SHORT).show();
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        ／ 页面关闭  销毁 Presenter 中所持有的LoginView 对象
+        presenter.detach();
     }
 }
